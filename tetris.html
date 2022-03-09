@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-9">
+    <style>
+        body{
+            margin:0;
+            text-align:center;
+        }
+        canvas{
+            margin-top:100px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <canvas style="display:inline-block;border:3px solid black" id='board' width="500px" height="800px"></canvas>
+        <div style="display:inline-block;text-align:left;margin-left:20px">
+            <button id='start' onclick="play()">game satrt</button>
+            <h4 id='score'>score : 0</h4>
+            <br>
+            <p>
+                keyUp: rotate <br>
+                keyLeft: move left <br>
+                keyRight: move right <br>
+                spacebar: move below
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const IMINO = 1, JMINO=2, LMINO=3, OMINO=4,SMINO=5, TMINO=6, ZMINO=7;
+        var board=[],r=[],g=[],b=[];
+        var x=20,y=0;
+        var canvas=document.getElementById('board');
+        var ctx=canvas.getContext('2d');
+        for (var i=0;i<26;i++){
+            board[i]=[],r[i]=[],g[i]=[],b[i]=[];
+            for (var j=0;j<20;j++){
+                board[i][j]=0;
+            }
+        }
+        a=0;
+        dir=1
+        function play() {
+            animate();
+        }
+
+        function animate(now = 0) {
+            // Clear board and draw new state.
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.fillRect(x, y, 20, 20);
+            y=y+1
+            if (y===ctx.canvas.height){
+                y=0;
+            }
+            requestId = requestAnimationFrame(animate);
+        }
+
+        document.addEventListener('keydown', keyPressEvent);
+        function keyPressEvent(event){
+            if (event.keyCode==37){ x=x-1;}//left
+            if (event.keyCode==38){dir=dir+1;}//up
+            if (event.keyCode==39){x=x+1;}//right
+            if (event.keyCode==40){y=y+1;}//down
+            if (event.keyCode==32){y=ctx.canvas.height-20;}//spacebar
+        }
+        function getMino(num){
+            switch(num){
+                case IMINO:
+                    if (dir==1||dir==3){
+                        board[y][x+1]=board[y][x+2]=board[y][x+3]=num;
+                        if (num==1){
+                            r[y][x+1]=r[y][x+2]=r[y][x+3]=r[y][x];
+                            g[y][x+1]=g[y][x+2]=g[y][x+3]=g[y][x];
+                            b[y][x+1]=b[y][x+2]=b[y][x+3]=b[y][x];
+                        }
+                    }
+                    else{
+                        if (y>=3) { board[y-1][x]=board[y-2][x]=board[y-3][x]=num;}
+                        else if (y==2) { board[y-1][x]=board[y-2][x]=num;}
+                        else if(y==1){board[y-1][x]=num;}
+                        if (num==1){
+                            if (y>=3) {
+                                r[y-1][x]=r[y-2][x]=r[y-3][x]=r[y][x];
+                                g[y-1][x]=g[y-2][x]=g[y-3][x]=g[y][x];
+                                b[y-1][x]=b[y-2][x]=b[y][x];
+                            }
+                            else if (y==2){
+                                r[y-1][x]=r[y-2][x]=r[y][x];
+                                g[y-1][x]=g[y-2][x]=g[y][x];
+                                b[y-1][x]=b[y-2][x]=b[y][x];
+                            }
+                            else if (y==1){
+                                r[y-1][x]=r[y][x];
+                                g[y-1][x]=g[y][x];
+                                b[y-1][x]=b[y][x];
+                            }
+                        }
+                    }
+                    break;
+                case JMINO:
+                    switch(dir){
+                        case 1:
+                            if (y == 0) {board[y][x - 1] = board[y][x + 1] = num;}
+                            else {board[y - 1][x - 1] = board[y][x - 1] = board[y][x + 1] = num;}
+                            if (num == 1) {
+                                if (y == 0) {
+                                    r[y][x - 1] = r[y][x + 1] = r[y][x];
+                                    g[y][x - 1] = g[y][x + 1] = g[y][x];
+                                    b[y][x - 1] = b[y][x + 1] = b[y][x];
+                                }
+                                else {
+                                    r[y - 1][x - 1] = r[y][x - 1] = r[y][x + 1] = r[y][x];
+                                    g[y - 1][x - 1] = g[y][x - 1] = g[y][x + 1] = g[y][x];
+                                    b[y - 1][x - 1] = b[y][x - 1] = b[y][x + 1] = b[y][x];
+                                }
+                            }
+                            break;
+                        case 2:
+                            if (y >= 1) {board[y - 1][x] = board[y - 1][x + 1] = board[y + 1][x] = num;}
+                            else if (y == 0) {board[y + 1][x] = num;}
+                            if (num == 1) {
+                                if (y >= 1) {
+                                    r[y - 1][x] = r[y - 1][x + 1] = r[y + 1][x] = r[y][x];
+                                    g[y - 1][x] = g[y - 1][x + 1] = g[y + 1][x] = g[y][x];
+                                    b[y - 1][x] = b[y - 1][x + 1] = b[y + 1][x] = b[y][x];
+                                }
+                                else if (y == 0) {
+                                    r[y + 1][x] = r[y][x];
+                                    g[y + 1][x] = g[y][x];
+                                    b[y + 1][x] = b[y][x];
+                                }
+                            }
+                            break;
+                        case 3:
+                            board[y][x - 1] = board[y][x + 1] = board[y + 1][x + 1] = num;
+                            if (num == 1) {
+                                r[y][x - 1] = r[y][x + 1] = r[y + 1][x + 1] = r[y][x];
+                                g[y][x - 1] = g[y][x + 1] = g[y + 1][x + 1] = g[y][x];
+                                b[y][x - 1] = b[y][x + 1] = b[y + 1][x + 1] = b[y][x];
+                            }
+                            break;
+                        case 4:
+                            if (y >= 1) {board[y - 1][x] = board[y + 1][x] = board[y + 1][x - 1] = num;}
+                            else board[y + 1][x] = board[y + 1][x - 1] = num;
+                            if (num == 1) {
+                                if (y >= 1) {
+                                    r[y - 1][x] = r[y + 1][x] = r[y + 1][x - 1] = r[y][x];
+                                    g[y - 1][x] = g[y + 1][x] = g[y + 1][x - 1] = g[y][x];
+                                    b[y - 1][x] = b[y + 1][x] = b[y + 1][x - 1] = b[y][x];
+                                }
+                                else {
+                                    r[y + 1][x] = r[y + 1][x - 1] = r[y][x];
+                                    g[y + 1][x] = g[y + 1][x - 1] = g[y][x];
+                                    b[y + 1][x] = b[y + 1][x - 1] = b[y][x];
+                                }
+                            }
+                            break;
+                    }
+                    break;
+                case LMINO:
+                    switch(dir){
+                        case 1:
+                            if (y == 0) {board[y][x - 1] = board[y][x + 1] = num;}
+                            else{ board[y][x - 1] = board[y][x + 1] = board[y - 1][x + 1] = num;}
+                            if (num == 1) {
+                                if (y == 0) {
+                                    r[y][x - 1] = r[y][x + 1] = r[y][x];
+                                    g[y][x - 1] = g[y][x + 1] = g[y][x];
+                                    b[y][x - 1] = b[y][x + 1] = b[y][x];
+                                }
+                                else {
+                                    r[y][x - 1] = r[y][x + 1] = r[y - 1][x + 1] = r[y][x];
+                                    g[y][x - 1] = g[y][x + 1] = g[y - 1][x + 1] = g[y][x];
+                                    b[y][x - 1] = b[y][x + 1] = b[y - 1][x + 1] = b[y][x];
+                                }
+                            }
+                            break;
+                        case 2:
+                            if (y >= 1) {board[y - 1][x] = board[y + 1][x] = board[y + 1][x + 1] = num;}
+                            else board[y + 1][x] = board[y + 1][x + 1] = num;
+                            if (num == 1) {
+                                if (y >= 1) {
+                                    r[y - 1][x] = r[y + 1][x] = r[y + 1][x + 1] = r[y][x];
+                                    g[y - 1][x] = g[y + 1][x] = g[y + 1][x + 1] = g[y][x];
+                                    b[y - 1][x] = b[y + 1][x] = b[y + 1][x + 1] = b[y][x];
+                                }
+                                else {
+                                    r[y + 1][x] = r[y + 1][x + 1] = r[y][x];
+                                    g[y + 1][x] = g[y + 1][x + 1] = g[y][x];
+                                    b[y + 1][x] = b[y + 1][x + 1] = b[y][x];
+                                }
+                            }
+                            break;
+                        case 3:
+                            board[y][x - 1] = board[y][x + 1] = board[y + 1][x - 1] = num;
+                            if (num == 1) {
+                                r[y][x - 1] = r[y][x + 1] = r[y + 1][x - 1] = r[y][x];
+                                g[y][x - 1] = g[y][x + 1] = g[y + 1][x - 1] = g[y][x];
+                                b[y][x - 1] = b[y][x + 1] = b[y + 1][x - 1] = b[y][x];
+                            }
+                            break;
+                        case 4:
+                            if (y >= 1) {board[y - 1][x] = board[y - 1][x - 1] = board[y + 1][x] = num;}
+                            if (num == 1 && y >= 1) {
+                                r[y - 1][x] = r[y - 1][x - 1] = r[y + 1][x] = r[y][x];
+                                g[y - 1][x] = g[y - 1][x - 1] = g[y + 1][x] = g[y][x];
+                                b[y - 1][x] = b[y - 1][x - 1] = b[y + 1][x] = b[y][x];
+                            }
+                            break;
+                    }
+                    break;
+                case OMINO:
+                    if (y >= 1) {board[y - 1][x - 1] = board[y - 1][x] = board[y][x - 1] = num;}
+                    else {board[y][x - 1] = num;}
+                    if (num == 1) {
+                        if (y >= 1) {
+                            r[y - 1][x - 1] = r[y - 1][x] = r[y][x - 1] = r[y][x];
+                            g[y - 1][x - 1] = g[y - 1][x] = g[y][x - 1] = g[y][x];
+                            b[y - 1][x - 1] = b[y - 1][x] = b[y][x - 1] = b[y][x];
+                        }
+                        else {
+                            r[y][x - 1] = r[y][x];
+                            g[y][x - 1] = g[y][x];
+                            b[y][x - 1] = b[y][x];
+                        }
+                    }
+                    break;
+                case SMINO:
+                    if (dir == 1 || dir == 3) {
+                        if (y >= 1) {board[y - 1][x] = board[y - 1][x + 1] = board[y][x - 1] = num;}
+                        else {board[y][x - 1] = num;}
+                        if (num == 1) {
+                            if (y >= 1) {
+                                r[y - 1][x] = r[y - 1][x + 1] = r[y][x - 1] = r[y][x];
+                                g[y - 1][x] = g[y - 1][x + 1] = g[y][x - 1] = g[y][x];
+                                b[y - 1][x] = b[y - 1][x + 1] = b[y][x - 1] = b[y][x];
+                            }
+                            else { r[y][x - 1] = r[y][x]; g[y][x - 1] = g[y][x]; b[y][x - 1] = b[y][x]; }
+                        }
+                    }
+                    else {
+                        if (y >= 1) {board[y - 1][x - 1] = board[y][x - 1] = board[y + 1][x] = num;}
+                        else {board[y][x - 1] = board[y + 1][x] = num;}
+                        if (num == 1) {
+                            if (y >= 1) {
+                                r[y - 1][x - 1] = r[y][x - 1] = r[y + 1][x] = r[y][x];
+                                g[y - 1][x - 1] = g[y][x - 1] = g[y + 1][x] = g[y][x];
+                                b[y - 1][x - 1] = b[y][x - 1] = b[y + 1][x] = b[y][x];
+                            }
+                            else {
+                                r[y][x - 1] = r[y + 1][x] = r[y][x];
+                                g[y][x - 1] = g[y + 1][x] = g[y][x];
+                                b[y][x - 1] = b[y + 1][x] = b[y][x];
+                            }
+                        }
+                    }
+                    break;
+                case TMINO:
+                    switch (dir) {
+                        case 1:
+                            if (y >= 1) {board[y - 1][x] = board[y][x - 1] = board[y][x + 1] = num;}
+                            else {board[y][x - 1] = board[y][x + 1] = num;}
+                            if (num == 1) {
+                                if (y >= 1) {
+                                    r[y - 1][x] = r[y][x - 1] = r[y][x + 1] = r[y][x];
+                                    g[y - 1][x] = g[y][x - 1] = g[y][x + 1] = g[y][x];
+                                    b[y - 1][x] = b[y][x - 1] = b[y][x + 1] = b[y][x];
+                                }
+                                else {
+                                    r[y][x - 1] = r[y][x + 1] = r[y][x];
+                                    g[y][x - 1] = g[y][x + 1] = g[y][x];
+                                    b[y][x - 1] = b[y][x + 1] = b[y][x];
+                                }
+                            }
+                            break;
+                        case 2:
+                            if (y >= 1) {board[y - 1][x] = board[y][x + 1] = board[y + 1][x] = num;}
+                            else {board[y][x + 1] = board[y + 1][x] = num;}
+                            if (num == 1) {
+                                if (y >= 1) {
+                                    r[y - 1][x] = r[y][x + 1] = r[y + 1][x] = r[y][x];
+                                    g[y - 1][x] = g[y][x + 1] = g[y + 1][x] = g[y][x];
+                                    b[y - 1][x] = b[y][x + 1] = b[y + 1][x] = b[y][x];
+                                }
+                                else {
+                                    r[y][x + 1] = r[y + 1][x] = r[y][x];
+                                    g[y][x + 1] = g[y + 1][x] = g[y][x];
+                                    b[y][x + 1] = b[y + 1][x] = b[y][x];
+                                }
+                            }
+                            break;
+                        case 3:
+                            board[y][x - 1] = board[y][x + 1] = board[y + 1][x] = num;
+                            if (num == 1) {
+                                r[y][x - 1] = r[y][x + 1] = r[y + 1][x] = r[y][x];
+                                g[y][x - 1] = g[y][x + 1] = g[y + 1][x] = g[y][x];
+                                b[y][x - 1] = b[y][x + 1] = b[y + 1][x] = b[y][x];
+                            }
+                            break;
+                        case 4:
+                            if (y >= 1) {board[y - 1][x] = board[y][x - 1] = board[y + 1][x] = num;}
+                            else {board[y][x - 1] = board[y + 1][x] = num;}
+                            if (num == 1) {
+                                if (y >= 1) {
+                                    r[y - 1][x] = r[y][x - 1] = r[y + 1][x] = r[y][x];
+                                    g[y - 1][x] = g[y][x - 1] = g[y + 1][x] = g[y][x];
+                                    b[y - 1][x] = b[y][x - 1] = b[y + 1][x] = b[y][x];
+                                }
+                                else {
+                                    r[y][x - 1] = r[y + 1][x] = r[y][x];
+                                    g[y][x - 1] = g[y + 1][x] = g[y][x];
+                                    b[y][x - 1] = b[y + 1][x] = b[y][x];
+                                }
+                            }
+                            break;
+                    }
+                case ZMINO:
+                    if (dir == 1 || dir == 3) {
+                        if (y >= 1) {board[y - 1][x - 1] = board[y - 1][x] = board[y][x + 1] = num;}
+                        else {board[y][x + 1] = num;}
+                        if (num == 1) {
+                            if (y >= 1) {
+                                r[y - 1][x - 1] = r[y - 1][x] = r[y][x + 1] = r[y][x];
+                                g[y - 1][x - 1] = g[y - 1][x] = g[y][x + 1] = g[y][x];
+                                b[y - 1][x - 1] = b[y - 1][x] = b[y][x + 1] = b[y][x];
+                            }
+                            else {
+                                r[y][x + 1] = r[y][x];
+                                g[y][x + 1] = g[y][x];
+                                b[y][x + 1] = b[y][x];
+                            }
+                        }
+                    }
+                    else {
+                        if (y >= 1) {board[y - 1][x] = board[y][x - 1] = board[y + 1][x - 1] = num;}
+                        else {board[y][x - 1] = board[y + 1][x - 1] = num;}
+                        if (num == 1) {
+                            if (y >= 1) {
+                                r[y - 1][x] = r[y][x - 1] = r[y + 1][x - 1] = r[y][x];
+                                g[y - 1][x] = g[y][x - 1] = g[y + 1][x - 1] = g[y][x];
+                                b[y - 1][x] = b[y][x - 1] = b[y + 1][x - 1] = b[y][x];
+                            }
+                            else {
+                                r[y][x - 1] = r[y + 1][x - 1] = r[y][x];
+                                g[y][x - 1] = g[y + 1][x - 1] = g[y][x];
+                                b[y][x - 1] = b[y + 1][x - 1] = b[y][x];
+                            }
+                        }
+                    }
+                    break;
+            }
+            
+        }
+        function gamePanelSave(x,y){
+            for (var i=0;i<4;i++){
+                for (var j=0;j<4;j++){
+                    if (currentState&(0x8000>>(i*4+j))){
+                        this.gamePanel[this.sPos.y+i][this.sPos.x+j]=1;
+                    }
+                }
+            }
+        }
+        
+    </script>
+</body>

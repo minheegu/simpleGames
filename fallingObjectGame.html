@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-9">
+    <style>
+        body{
+            margin:0;
+            text-align:center;
+        }
+        canvas{
+            margin-top:100px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <canvas style="display:inline-block;border:3px solid black" id='board' width="500px" height="800px"></canvas>
+        <div style="display:inline-block;text-align:left;margin-left:20px">
+            <input type="radio" id='level1' name="level" checked>LEVEL 1
+            <input type="radio" id='level2' name="level">LEVEL 2
+            <input type="radio" id='level3' name="level">LEVEL 3
+            <input type="radio" id='level4' name="level">LEVEL 4
+            <br>
+            <input type="button" id='start' onclick="play()" value='Game Start'>
+            <h4>score : <label id='score'>0</label></h4>
+            <br>
+        </div>
+    </div>
+
+    <script>
+        var objPosX=20,objPosY=0,userPosX=0,userPosY=0;
+        var score=0,cnt=0;
+        var labelScore=document.getElementById('score');
+        var canvas=document.getElementById('board');
+        var ctx=canvas.getContext('2d');
+        document.addEventListener('keydown', keyPressEvent);
+        function play() {
+            var levelList=document.getElementsByName('level');
+            for (var i=0;i<levelList.length;i++){
+                if (levelList[i].checked){
+                    level=i+1;
+                }
+            }
+            generateNewObj();
+            userPosX=ctx.canvas.width/2-40,userPosY=ctx.canvas.height-10;
+            animate();
+        }
+
+        function animate() {
+            // Clear board and draw new state.
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.fillRect(objPosX, objPosY, 20, 20);
+            ctx.fillStyle='blue';
+            ctx.fillRect(userPosX,userPosY,50,10);
+            objPosY=objPosY+1*level;
+            if (objPosX+20>userPosX&&objPosX<userPosX+50
+            &&objPosY+20>userPosY&&objPosY+20<=userPosY+10){
+                score=score+10;
+                labelScore.innerText=score;
+                generateNewObj();
+            }
+            else if (objPosY===ctx.canvas.height){
+                generateNewObj();
+            }
+            if (score>=250){
+                alert('win!');
+                if (animationId){
+                    cancelAnimationFrame(animationId);
+                }
+            }
+            if (cnt==40){
+                alert('gameOver!');
+                if (animationId){
+                    cancelAnimationFrame(animationId);
+                }
+            }
+            animationId = requestAnimationFrame(animate);
+        }
+        function generateNewObj(){
+            objPosX=Math.floor(Math.random()*(ctx.canvas.width-20));
+            objPosY=0;
+            cnt=cnt+1;
+        }
+        function keyPressEvent(event){
+            if (event.keyCode==37){ userPosX=userPosX-20;}//left
+            if (event.keyCode==39){userPosX=userPosX+20;}//right
+        }
+        
+    </script>
+</body>

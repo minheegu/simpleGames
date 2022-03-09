@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <script src="test.js"></script>
+        <style>
+            li{color:red}
+            table{
+                color:blue;
+                text-decoration:underline;
+            }
+            #selectedItem{
+                font-size:50px;
+            }
+            #deltedItem{
+                text-decoration:line-through;
+            }
+            #lecture>li{
+                border:1px solid red;
+            }
+            ul,ol{
+                background-color: powderblue;
+            }
+
+            .dark {
+                background-color:black;
+                color:white;
+            }
+            .dark #selectedItem{
+                color:yellow;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="list">
+            <li id="selectedItem">empty</li>
+            <li id="deletedItem">empty</li>
+            <li>
+                <input type="button" onclick="open1()" value="test.html open new" />
+            </li>
+            <li>
+                <input type="button" onclick="open2()" value="test.html open/reload" />
+                <input type="button" onclick="winclose()" value="test.html close"/>
+            </li>
+            <li class="active">bli</li>
+            <li id='pli'>pli</li>
+        </ul>
+        <ol id="lecture">
+            <li>HTML</li>
+            <li>CSS
+              <ol>
+                <li>selector</li>
+                <li>declaration</li>
+              </ol>
+            </li>
+            <li>JavaScript</li>
+        </ol>
+        <table>
+            <tr>
+                <td colspan="2">
+                    <h2>테이블</h2>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <select name="items1">
+                        <option value="HTML">HTML</option>
+                        <option value="자바스크립트">자바스크립트</option>
+                        <option value="CSS">CSS</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <select name="items2" size="3">
+                        <option value="HTML">HTML</option>
+                        <option value="자바스크립트">자바스크립트</option>
+                        <option value="CSS">CSS</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <!--BOM(Browser Object Model): 웹페이지 내용을 제외한 브라우저의 각종 요소들을 객체화 시킨 것.-->
+        <!--window, location, navigator 객체, alert, prompt 창-->
+        <input id="execute_btn" type="button" value="btn" />
+        <input id="ckb" type="checkbox" checked="false" onClick="ckb_Checked(this)"/>
+        <input id="txb" type="text" value="ddd" onchange="txbChanged()" onkeypress="winmessage(this.value)"/>
+        <input id="pw" type="password" size="20"/>
+        <input type="radio" name="food" value="chicken" checked> 치킨
+        <input type="radio" name="food" value="pizza"> 피자
+        <input type="submit" value="회원 가입" >
+        <input type="reset" value="다시 입력">
+        <input type="button" onclick="document.body.className='dark'" value="dark" /><!--위 style에서 정의한 .dark 스타일-->
+        <input type="button" id='hw' value="개별파일 정의"/>
+        
+        <!-- <script type="text/javascript" src="testjs.js"></script> -->
+        <script type="text/javascript">
+            //0,'',undefined,var a;->a,null,NaN: false
+            //0외 숫자: true
+            if (prompt('아이디: ')==='als'&&prompt('비번: ')==='0000'){//BOM
+                alert('일치!')
+            }
+            else{
+                alert('!')//==window.alert('!')
+            }
+
+
+            //DOM(Document Object Model): 웹페이지 내용 제어
+            console.log(document.body);
+            // colsole.log(document.images);
+            console.log(document.getElementsByTagName('body')[0]);
+            console.log(document.getElementsByTagName('body'));
+            // var lis=document.getElementsByTagName('li');
+            // for (var i=0;i<lis.length;i++){
+            //     lis[i].style.color='yellow'
+            // }
+            //위의 코드와 동일
+            var lis0=document.querySelectorAll('li');
+            for (var i=0;i<lis0.lnegth;i++){
+                lis0[i].style.color='yellow'
+            }
+            //첫번째만
+            var li=document.querySelector('li');
+            li.style.color='skyblue';
+
+            var ul=document.getElementsByTagName('ul')[0];
+            var lis=ul.getElementsByTagName('li');
+            for (var i=0;i<lis.length;i++){
+                lis[i].style.color='yellow';
+            }
+            var lis2=document.getElementsByClassName('active');
+            for (var i=0;i<lis2.length;i++){
+                lis2[i].style.color='blue';
+            }
+            var li2=document.querySelectorAll('.active');
+            for (var i=0;i<li2.length;i++){
+                li2[i].style.color='purple';
+            }
+            // 첫번째만
+            // var li=document.querySelector('.active');
+            // li.style.color='blue';
+            
+            var lis3=document.getElementById('pli');
+            lis3.style.color='purple';
+
+
+            console.log(location.toString(),location.href);//윈도우 위치, url
+            console.log(location.protocol,location.host,location.port,location.pathname,location.search,location.hash)
+
+            // 새 창 생성
+            function open1(){
+                // window.open('test.html');
+                window.open('test.html', '_blank', 'width=200, height=200, resizable=no');//'_blank': 새창, _blank 없으면 사이즈 설정 불가
+            }
+
+            function open2(){
+                // window.open('test.html','_self');//_self: 새 창 이름 - 현재 창이 바뀜, 스크립트가 실행되는 창을 의미
+                win=window.open('test.html','ot');//해당 이름의 윈도우가 존재할 때는 그 윈도우를 로드함 - 위 코드는 다시 새로 창 실행
+            }
+            function winmessage(msg){
+                win.document.write(msg)
+                //win.document.getElementById('message').innerText=msg;
+            }
+            function winclose(){
+                win.close();
+            }
+            // 버튼 실행 함수
+            function addEvent(target,eventType,eventHandler,useCapture){
+                if (target.addEventListener){
+                    target.addEventListener(eventType,eventHandler,useCapture?useCapture:false);
+                }
+                else if(target.attachEvent){
+                    var r=target.attachEvent("on"+eventType,eventHandler);
+                }
+            }
+            function clickHandler(event){
+                var nav=document.getElementById('list');
+                for (var i=0;i<nav.childNodes.length;i++){
+                    var child=nav.childNodes[i];
+                    if (child.nodeType==3){
+                        continue;
+                    }
+                    child.innerText='ddd';
+                }
+            }
+            addEvent(document.getElementById('execute_btn'),'click',clickHandler);
+            // 체크 박스
+            function ckb_Checked(ckb){
+                var a=Math.pow(3,2)+Math.round(10.6)+Math.sqrt(9)+Math.random();
+                var b="d";
+                if (ckb.checked){
+                    if(a>2||a<-1){
+                        alert(a+1+' eg\'s javascript'+"ddd\n f");
+                    }
+                    else if(a<=1&&a>0){
+                        
+                    }
+                    else{}
+                }
+                else{
+                    alert(typeof "1"+"coding everybody".length+typeof 1);
+                }
+            }
+            // 텍스트 변경
+            function txbChanged(){
+                alert("1==\'1\':"+ 1=='1'+", \n \'one\'===\'one\' : "+"one"=="one"+", \n null==undefined : "+null==undefined+", \n NaN!==NaN : "+NaN!==NaN
+                +",\n 1===\'1\'(False):"+1==='1');
+                location.href='http://google.co.kr';//=== location='~';
+                location.reload();//location 원위치로
+            }
+            //
+            function ft(arg0,arg1){
+                var member=['aaa','bbb','ccc']
+                member.push('ddd');
+                member=member.concat(['fff','eee']);
+                member.unshift('d');//->member=[z,member[:]]
+                member.splice(3,2,'b');//3: 삽입할 위치, 0: 제거할 원소(2+1,2+2),'b':삽입할 원소
+                member.shift();//첫번째 원소 제거
+                member.pop();//마지막
+                member.sort(); member.reverse();//정렬
+                alert(member.length);
+                return member[arg0]+", "+member[arg1];
+            }
+
+            var grades={'a':10}
+            grades['b']=8; grades['c']=30;
+            for (key in grades){
+                document.write("key:"+key+"\'s value: "+grades[key]+"<br />");
+            }
+            var scores={
+                'list':{'a':10, 'b':20, 'c':30},
+                'show': function(){
+                    for (var name in this.list){
+                        document.write(name+':'+this.list[name]+"<br />");
+                    }
+                }
+            }
+            alert(ft(0,2));
+            scores.show();
+            
+            // jQuery (다운: http://jquery.com/ )에서는 위의 코드를 head에 <script src="https://code.jquery.com/jquery-1.11.0.min.js">~를 추가한 다음간단하게 처리 가능.
+            // jQuery manual: http://api.jquery.com/
+            //         $('#execute_btn').click(function(){
+            //     $('#list li').text('coding everybody');
+            //  })
+            var process=[
+                function(input){return input+10;},
+                function(input){return input*input;},
+                function(input){return input/2;}
+            ]
+            var input=1;
+            for (var i =0;i<process.length;i++){
+                input=process[i](input);
+            }
+            // testjs 코드 실행
+            alert(calc2('plus')(2,1)); alert(calc2('minus')(2,1))
+            //처리 위임
+            function sortNumber(a,b){
+                return b-a; // a-b이면 순서 거꾸로
+            }
+            var numbers=[20,10,9,8,7,6,5,4,3,2,1];
+            alert(numbers.sort(sortNumber));
+            // 클로저
+            function outter(){
+                var title='ddd';
+                function inner(){
+                    //var title='ddd';
+                    alert(title);
+                }
+                inner();
+            }
+            outter();
+
+            ghost=factory_movie("ghost");
+            matrix=factory_movie("matrix");
+            alert(ghost.get_title());
+            alert(matrix.get_title());
+            matrix.set_title("matrix2");
+            alert(matrix.get_title());
+            //클로저 헷갈릴 수 있는 부분
+            var arr=[]
+            for (var i=0;i<5;i++){
+                arr[i]=function(){
+                    return i;
+                }
+            }// 이렇게 하면 모든 i in arr에 대해 arr[i]=4
+
+            for (var i=0;i<5;i++){
+                arr[i]=function(id){
+                    return function(){
+                        return id;
+                    }
+                }(i);
+            }
+            for (var index in arr){
+                console.log(arr[index]());
+            }
+            // Function.apply, .call
+            function sum(arg1,arg2){
+                return arg1+arg2
+            }
+            alert(sum.apply(null,[1,2]))//null: 함수가 실행될 맥락?, [1,2]
+
+            o1={val1:1,val2:2,val3:3}
+            o2={v1:10,v2:50,v3:100,v4:25}
+            function sum2(){
+                var _sum=0;
+                for (name in this){
+                    if (name!=='sum'){
+                        _sum+=this[name];
+                    }
+                }
+                return _sum;
+            }
+            alert(sum2.apply(o1))//6
+            alert(sum2.apply(o2))//185
+            
+            o1.sum=sum2;
+            alert(o1.sum());
+            delete o1.sum;
+
+            //생성자
+            function Person0(name){
+                this.name=name;
+                this.introduce=function(){
+                    return 'My name is '+this.name;
+                }
+            }
+            var p1=new Person0('kim');
+            var p2=new Person0('park');
+            document.write(p1.introduce()+","+p2.introduce()+"<br />");//);
+            
+            // ft2(); == window.ft2();
+            var o ={'func':function(){
+                alert('Hello?');
+            }}
+            window.o.func();//==o.func();
+            //this
+            function ft3(){
+                if (window===this){
+                    document.write("window === this");
+                }
+            }
+            ft3();//-> window === this
+            var o ={
+                func:function(){
+                    if (o===this){
+                        document.write("o === this");
+                    }
+                }
+            }
+            o.func();//-> o === this
+            var funcThis=null;
+            function Func(){
+                funcThis=this;
+            }
+            var o1=Func();//-> funcThis === window
+            var o2=new Func();//-> funcThis===o2
+            function Func2(){
+                document.write(o);
+            }
+            var o = new Func();// ->undefined
+            var o={}, p={};
+            function func(){
+                switch(this){
+                    case o:
+                        document.write('o<br />');
+                        break;
+                    case p:
+                        document.write('p<br />');
+                        break;
+                    case window:
+                        document.write('window<br />');
+                        break;
+                }
+            }
+            func(); func.apply(o); func.apply(p);// -> window, o, p
+
+            // 상속, prototype에 저장된 속성들은 생성자를 통해서 객체가 만들어질 때 그 객체에 연결됨.
+            function Person(name){
+                this.name = name;
+            }
+            Person.prototype.name=null;
+            Person.prototype.introduce = function(){
+                return 'This is '+this.name; 
+            }
+            function Programmer(name){
+                this.name = name;
+            }
+            Programmer.prototype = new Person();//Person과 연결
+            Programmer.prototype.coding = function(){
+                return "hello world";
+            }
+            var p1 = new Programmer('egoing');
+            document.write(p1.introduce()+"<br />");
+            // Programmer 객체에 introduce가 있다면 그 함수를 실행하지만
+            // 현재, 없는 상태에서 Person.prototype.introduce함수 호출
+            // [Programmer객체와 Person객체가 prototype으로 연결되었으므로 가능]
+            document.write(p1.coding()+"<br />");
+            // System.out.println("ddd")
+            //표준 내장 객체 확장 - ex. 배열
+            var arr=new Array('seoul','new york','ladarkh','pusan','tsukuba');
+            function getRandomValueFromArray(haystack){
+                var index=Math.floor(haystack.length*Math.random());
+                return haystack[index];
+            }
+            // ===
+            Array.prototype.rand=function(){
+                var index=Math.floor(this.length*Math.random());
+                return this[index];
+            }//arr.hasOwnProperty(rand)로 객체의 속성 여부 판단 가능
+            var arr=new Array('seoul','new york','ladarkh','pusan','tsukuba');
+            //-> getRandomValueFromArray(arr) === arr.rand()
+
+            // Object 확장 - javascript 모든 객체는 Object 객체 상속.
+            // -> Object 객체 확장시, 모든 객체가 접근 가능한 API 생성 가능하지만 모든 객체에 영향을 주므로 확장하지 않는게 바람직함.
+
+            // 원시 데이터 타입(숫자, 문자열, 불리언(true/false), null, undefined)은 프로퍼티와 메소드가 있는 객체이지만 자바스크립트가 임시로 문자열 객체를 만들고 사용이 끝나면 내부처리로 제거.
+            // var str='a'; a.prop='dd'; a.prop; ->undefined! 
+            // : 원시 데이터형을 객체처럼 다룰 수있는 객체 제공(레퍼객체, wrapper object): String, Number, Boolean
+
+            // 참조 헷갈릴 수 있는 부분
+            var a={'id':1};//1
+            function ft4(b){
+                b={'id':2};//2
+            }// func(a); -> a.id=1, a=1 : 함수에 전달된 값은 객체 a이고(b=a) b를 새로운 객체로 대체하는 것(b={'id':2})은 참조하는 객체 변경이므로 a에 영향 x.
+            function ft5(b){
+                b.id=2;
+            }// func(a); -> a.id=2
+            
+        </script>
+    </body>
+</html>
