@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<head>
+    <title>Binggo Game</title>
+    <meta charset="UTF-8">
+    <style>
+        body{
+            background-color: ivory;
+            text-align:center;
+            font-family: 'Vibes', cursive;
+			font-family: 'Raleway', sans-serif;
+			font-family: 'Mansalva', cursive;
+        }
+        table, th, td { 
+            table-layout: fixed;
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+            padding: 20px;
+        }
+        h1,h3{
+			text-align: center;
+			padding-top:55px;
+		}
+        /* javascript input button style code https://codepen.io/althi/pen/eKdmaa */
+        .btnStyle{
+            background-color: #343A40;
+            border-radius: 4px;  
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+        .btnHoverStyle:hover{
+            background-image: linear-gradient(90deg, #00C0FF 0%, #FFCF00 49%, #FC4F4F 80%, #00C0FF 100%);
+            animation:slidebg 5s linear infinite;
+        }
+
+        .nbrStyle {
+            font-family: inherit;
+            width: 500;
+            border: 0;
+            border-bottom: 2px solid gray;
+            outline: 0;
+            font-size: 1.3rem;
+            color: blue;
+            padding: 7px 0;
+            background: transparent;
+            transition: border-color 0.2s;
+        }
+        @keyframes slidebg {
+            to {
+                background-position:20vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 style='font-size:100px'>Bingo Game</h1>
+    <input placeholder="0" class="nbrStyle" style='text-align: center;' id="boardSz" name='boardSz' type="number" min='1' max='10'/>
+    <input type="button" value="Generate board" class="btnStyle btnHoverStyle" onclick="btnGenerateClick()"/>
+    <h3>User's board</h3>
+    <table id="userBoard" width='500' height='500' align="center"></table>
+    <br/>
+    <h4 id="userBingoCnt">User's Bingo Checked Line Count: 0</h4>
+    <h3>Computer's board</h3>
+    <table id="comBoard" width='500' height='500' align="center"></table>
+    <br/>
+    <h4 id="comBingoCnt">Computer's Bingo Checked Line Count: 0</h4>
+</body>
+<script>
+    var userTable=[];
+    var comTable=[];
+    var userBoard=document.getElementById('userBoard');
+    var comBoard=document.getElementById('comBoard');
+    
+    function btnGenerateClick(){
+        userBoard.innerHTML="";
+        comBoard.innerHTML="";
+        var size=document.getElementById('boardSz').value;
+        for (var i=0;i<size;i++){
+            var row=userBoard.insertRow(userBoard.rows.length);
+            var comRow=comBoard.insertRow(comBoard.rows.length);
+            userTable[i]=[];
+            comTable[i]=[];
+            for (var j=0;j<size;j++){
+                userTable[i][j]=Math.floor(Math.random()*size*size*2);
+                comTable[i][j]=Math.floor(Math.random()*size*size*2);
+                if (i!=0||j!=0){
+                    while(true){
+                        if (isOverlap(userTable,i,j,size)){
+                            break;
+                        }
+                        userTable[i][j]=Math.floor(Math.random()*size*size*2);
+                    }
+                    while(true){
+                        if (isOverlap(comTable,i,j,size)){
+                            break;
+                        }
+                        comTable[i][j]=Math.floor(Math.random()*size*size*2);
+                    }
+                }
+                var comCell=comRow.insertCell(j);
+                comCell.innerHTML=comTable[i][j];
+                var userCell=row.insertCell(j);
+                userCell.innerHTML=userTable[i][j];
+                userCell.onclick=cellClick;
+            }
+        }
+    }
+
+    function isOverlap(table,i,j,size){
+        for (var k1=0;k1<=i;k1++){
+            for (var k2=0;k2<size;k2++){
+                if (k1===i&&k2===j) {
+                    return true;
+                }
+                if (table[i][j]===table[k1][k2]){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    function cellClick(e){
+        for (var i=0;i<userTable.length;i++){
+            for (var j=0;j<userTable.length;j++){
+                if (comBoard.rows[i].cells[j].innerHTML==e.srcElement.innerHTML){
+                    comBoard.rows[i].cells[j].innerHTML='<del>'+comBoard.rows[i].cells[j].innerHTML+'</del>';
+                    comTable[i][j]=-1;
+                    break;
+                }
+            }
+        }
+        
+        userTable[e.srcElement.parentNode.rowIndex][e.srcElement.cellIndex]=-1;
+        e.srcElement.innerHTML='<del>'+e.srcElement.innerHTML+'</del>';
+        
+        var userBingoCnt=document.getElementById('userBingoCnt');
+        var userCnt=getBingoCnt(userTable,checkCell(userTable),false);
+        userBingoCnt.innerHTML="User's Bingo Checked Line Count: "+userCnt;
+        
+        var comBingoCnt=document.getElementById('comBingoCnt');
+        var comCnt=getBingoCnt(comTable,checkCell(comTable),true);
+        comBingoCnt.innerHTML="Computer's Bingo Checked Line Count: "+comCnt;
+        if (userCnt>=userTable.length){
+            alert('bingo!');
+        }
+        else{
+            if (comCnt>=userTable.length){
+                alert('com bingo!');
+            }
+        }
+    }
+
+    function checkCell(table){
+        var size=table.length;
+        var diag=[0,0],hor=[],ver=[],bingo=[];
+        for (var i=0;i<size;i++){
+            hor[i]=0;
+            ver[i]=0;
+        }
+        for (var i=0;i<2*size+2;i++){
+            bingo[i]=0;
+        }
+        for (var i=0;i<size;i++){
+            //대각선
+            if (table[i][i]==-1){
+                diag[0]=diag[0]+1;
+            }
+            if (table[i][size-1]==-1){
+                diag[1]=diag[1]+1;
+            }
+            for (var j=0;j<size;j++){
+                if (table[i][j]==-1){
+                    hor[i]=hor[i]+1;
+                }
+                if (table[j][i]==-1){
+                    ver[j]=ver[j]+1;
+                }
+            }
+        }
+        
+        //return bingo=[diag[0],diag[1],hor[0],...,hor[size],ver[0],...,ver[size]] for convenience
+        bingo[0]=diag[0];
+        bingo[1]=diag[1];
+        for (i=0;i<size;i++){
+            bingo[i+2]=hor[i];
+            bingo[i+2+size]=ver[i];
+        }
+        return bingo;
+    }
+// table: userTable/comTable
+// bingo: the number of checked cells in bingo lines
+// bAuto: whether to select the cells to be checked automatically or not
+    function getBingoCnt(table,bingo,bAuto){
+        var size=table.length,cnt=0;
+        var check_max = 0, maxIdx=0;
+        //check_max: the diagonal/horizontal/vertical line which has the most checked cells
+        // max_index: the index of the line
+        
+        for (i=0;i<2*size+2;i++){
+            cnt=cnt+Math.floor(bingo[i]/size);
+            // select a cell in the line 'maxIdx' to be check
+            if (bAuto&&bingo[i]>check_max&&bingo[i]<size){
+                check_max=bingo[i];
+                maxIdx=i;
+            }
+        }
+        if (!bAuto){
+            return cnt;
+        }
+        //check diagonal line
+        if (maxIdx==0){
+            var mPt=Math.floor(size/2)+1;
+            if (table[mPt][mPt]!=-1){
+                table[mPt][mPt]=-1;
+                comBoard.rows[mPt].cells[mPt].innerHTML='<del>'+comBoard.rows[mPt].cells[mPt].innerHTML+'</del>'
+            }
+            for (var i=0;i<size;i++){
+                if (table[i][i]!=-1){
+                    table[i][i]=-1;
+                    comBoard.rows[i].cells[i].innerHTML='<del>'+comBoard.rows[i].cells[i].innerHTML+'</del>';
+                    break;
+                }
+            }
+        }
+        else if(maxIdx==1){
+            for (var i=0;i<size;i++){
+                if (table[i][size-1-i]!=-1){
+                    table[i][size-1-i]=-1;
+                    comBoard.rows[i].cells[size-1-i].innerHTML='<del>'+comBoard.rows[i].cells[size-1-i].innerHTML+'</del>';
+                    break;
+                }
+            }
+        }
+        //check horizontal line
+        else if(maxIdx<size+2){
+            for (i=0;i<size;i++){
+                if (table[maxIdx-2][i]!=-1){
+                    table[maxIdx-2][i]=-1;
+                    comBoard.rows[maxIdx-2].cells[i].innerHTML='<del>'+comBoard.rows[maxIdx-2].cells[i].innerHTML+'</del>';
+                    break;
+                }
+            }
+        }
+        //check vertical line
+        else{
+            for (var i=0;i<size;i++){
+                if (table[i][maxIdx-size-2]!=-1){
+                    table[i][maxIdx-size-2]=-1;
+                    comBoard.rows[i].cells[max_index-size-2].innerHTML='<del>'+comBoard.rows[i].cells[max_index-size-2].innerHTML+'</del>';
+                    break;
+                }
+            }
+        }
+        return cnt;
+    }
+</script>
