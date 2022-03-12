@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+    
+</head>
+<body>
+    <h1>Simple Games</h1>
+    <ul> Game Lists
+        <li>
+            <button id="bingoGame">Open bingo game</button>
+        </li>
+        <li>
+            <button id="fallingObjectGame">Open falling object game</button>
+        </li>
+    </ul>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded",function(e){
+            let btns=document.querySelectorAll("button");
+            btns.forEach(function(btn, index,_self){
+                btn.addEventListener("click",function(e){
+                    window.open(e.target.id.concat(".html"));
+                })
+            })
+                
+        })
+    </script>
+</body>
